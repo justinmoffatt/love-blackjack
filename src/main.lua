@@ -1,7 +1,6 @@
 -- blackjack game
 
 function love.load()
-	Card = require 'card'
 	-- the types of cards in a deck
 	VALUES = {11,2,3,4,5,6,7,8,9,10,10,10,10}
 	FACES = {'a','2','3','4','5','6','7','8','9','10','j','q','k'}
@@ -31,44 +30,70 @@ function love.load()
 	local i = 1
 	for suit = 1, 4, 1 do
 		for value = 1, 13, 1 do
-			deck[i] = {suit=SUITS[suit], face=FACES[value], value=VALUES[value]}
-			--
+			deck[i] = {suit=SUITS[suit], face=FACES[value], value=VALUES[value], img=love.graphics.newImage('img/cards/'..SUITS[suit]..'_'..FACES[value]..'.jpg')}
 			--Card:new(SUITS[suit], FACES[value], VALUES[value])
 			i = i + 1
 		end
 	end
 
+	font = love.graphics.newFont(percent_height(1/16)) 
+
 	-- print outs
-	line1='test'
-	line2='test2'
+	line1=percent_height(.01)
+	text_hand = ''
 
 	-- images for the coin/chips that are used for user input
 	chip_1 	= love.graphics.newImage('img/chip_1.png')
 	chip_5 	= love.graphics.newImage('img/chip_5.png')
 	chip_10 = love.graphics.newImage('img/chip_10.png')
 	chip_50 = love.graphics.newImage('img/chip_50.png')
+	chips = {chip_1, chip_5, chip_10, chip_50}
+	-- setup the card images
 
-	-- setup the card images 
-	--[[
-	card_image = {}
-	card_image[0] = love.graphics.newImage('img/card_empty.png')
-	for i = 1, 52, 1 do  		-- this is just a lazy way to add all 52 card images
-		card_image[i] = love.graphics.newImage('img/card_' + tostring(i) + '.png')
-	end
-	]]
+	card_empty = love.graphics.newImage('img/cards/card_empty.png')
+	card_back = love.graphics.newImage('img/cards/card_back.jpg')
+	card_boarder = love.graphics.newImage('img/cards/card_boarder.png')
+	card_p = {card_empty,card_empty,card_empty,card_empty,card_empty}
+	card_d = {card_empty,card_empty,card_empty,card_empty,card_empty}
+	card_b = {card_empty,card_empty,card_empty,card_empty,card_empty}
 end
 
 function love.draw()
 	love.graphics.setBackgroundColor(0, 50, 0)
+	love.graphics.setFont(font)
 	--love.graphics.print('Player Score: '..player_total..' Dealer Score: '.. dealer_total,10,0)
-	love.graphics.print('Bank: '.. bank .. ' Bet: '.. bet, 10,30)
-	love.graphics.print(line1, 10, 10)
-	love.graphics.print(line2, 10, 20)
-	love.graphics.draw(chip_1, 0, percent_height(0.75), 0, IMAGE_SCALE)
-	love.graphics.draw(chip_5, percent_width(0.25), percent_height(0.75), 0, IMAGE_SCALE)
-	love.graphics.draw(chip_10, percent_width(0.5), percent_height(0.75), 0, IMAGE_SCALE)
-	love.graphics.draw(chip_50, percent_width(0.75), percent_height(0.75), 0, IMAGE_SCALE)
+	love.graphics.print('Bank: '.. bank .. ' Bet: '.. bet, 10,percent_height(0.075))
+	love.graphics.print(line1, 10, percent_height(.01))
+	love.graphics.print(text_hand, percent_width(.28), percent_height(.9))
+	love.graphics.draw(chips[1], 0, percent_height(0.75), 0, IMAGE_SCALE)
+	love.graphics.draw(chips[2], percent_width(0.25), percent_height(0.75), 0, IMAGE_SCALE)
+	love.graphics.draw(chips[3], percent_width(0.5), percent_height(0.75), 0, IMAGE_SCALE)
+	love.graphics.draw(chips[4], percent_width(0.75), percent_height(0.75), 0, IMAGE_SCALE)
+	-- cards
+	love.graphics.draw(card_p[1], percent_width(1/6), percent_height(1/3), 0, IMAGE_SCALE)
+	love.graphics.draw(card_b[1], percent_width(1/6), percent_height(1/3), 0, IMAGE_SCALE)
+	love.graphics.draw(card_p[2], percent_width(2/6), percent_height(1/3), 0, IMAGE_SCALE)
+	love.graphics.draw(card_b[2], percent_width(2/6), percent_height(1/3), 0, IMAGE_SCALE)
+	love.graphics.draw(card_p[3], percent_width(3/6), percent_height(1/3), 0, IMAGE_SCALE)
+	love.graphics.draw(card_b[3], percent_width(3/6), percent_height(1/3), 0, IMAGE_SCALE)
+	love.graphics.draw(card_p[4], percent_width(4/6), percent_height(1/3), 0, IMAGE_SCALE)
+	love.graphics.draw(card_b[4], percent_width(4/6), percent_height(1/3), 0, IMAGE_SCALE)
+	love.graphics.draw(card_p[5], percent_width(5/6), percent_height(1/3), 0, IMAGE_SCALE)
+	love.graphics.draw(card_b[5], percent_width(5/6), percent_height(1/3), 0, IMAGE_SCALE)
+	
+	love.graphics.draw(card_d[1], percent_width(1/6), percent_height(1/6), 0, IMAGE_SCALE)
+	love.graphics.draw(card_b[6], percent_width(1/6), percent_height(1/6), 0, IMAGE_SCALE)
+	love.graphics.draw(card_d[2], percent_width(2/6), percent_height(1/6), 0, IMAGE_SCALE)
+	love.graphics.draw(card_b[7], percent_width(2/6), percent_height(1/6), 0, IMAGE_SCALE)
+	love.graphics.draw(card_d[3], percent_width(3/6), percent_height(1/6), 0, IMAGE_SCALE)
+	love.graphics.draw(card_b[8], percent_width(3/6), percent_height(1/6), 0, IMAGE_SCALE)
+	love.graphics.draw(card_d[4], percent_width(4/6), percent_height(1/6), 0, IMAGE_SCALE)
+	love.graphics.draw(card_b[9], percent_width(4/6), percent_height(1/6), 0, IMAGE_SCALE)
+	love.graphics.draw(card_d[5], percent_width(5/6), percent_height(1/6), 0, IMAGE_SCALE)
+	love.graphics.draw(card_b[10], percent_width(5/6), percent_height(1/6), 0, IMAGE_SCALE)
+	
 	-- draw the button boxes for debugging
+
 	--[[
 	love.graphics.rectangle('line', 0, percent_height(0.75), percent_width(0.25),percent_width(0.25))
 	love.graphics.rectangle('line', percent_width(0.25), percent_height(0.75), percent_width(0.25),percent_width(0.25))
@@ -91,13 +116,15 @@ function love.touchpressed(id, x, y, dx, dy, pressure)
 end	
 
 function love.update(dt)
-
+	
 	-- game logic
 	if game_state == 0 then				-- pause state
 		change_game_state(1)
 
 	elseif game_state == 1 then 		-- betting state
 		-- add to bet
+		line1= 'Place Bet'
+		text_hand = ''
 		if input_enabled then
 			
 			if in_box(input[1], input[2], 0, percent_height(0.75), percent_width(0.25), percent_width(0.25)) and bank > 0 then
@@ -119,6 +146,7 @@ function love.update(dt)
 		end
 
 	elseif game_state == 2 then 		-- card getting state
+		text_hand = 'Play Hand'
 		-- logic for the deaing
 		if player_total == 0 then	-- this is the init state
 			player_cards = {draw_card(), draw_card()}
@@ -130,18 +158,24 @@ function love.update(dt)
 				dealer_cards[#dealer_cards+1] = draw_card()
 				dealer_total = dealer_total + dealer_cards[#dealer_cards].value
 			end
-			line1 = 'Player Cards: '..player_cards[1].face .. ' ' .. player_cards[2].face
-			line2 = 'Dealer Cards: ' .. dealer_cards[1].face
-			--[[
-			for c = 1, #dealer_cards do
-				line2 = line2 .. dealer_cards[c].face .. ' '
+			card_p[1] = player_cards[1].img
+			card_p[2] = player_cards[2].img
+			card_b[1] = card_boarder
+			card_b[2] = card_boarder
+
+			card_d[1] = dealer_cards[1].img 
+			card_b[6] = card_boarder
+
+			for i = 2, #dealer_cards do
+				card_d[i] = card_back 
+				card_b[i+5] =card_boarder
 			end
-			]]
+			
 		elseif player_total == 21 then 								-- Player wins with natural 21
 			bank = bank + (bet * 2)
 			line1 = "Player wins"
 			
-			change_game_state(1)
+			change_game_state(3)
 			player_total = 0
 		
 		elseif player_total < 21 and in_box(input[1], input[2], 0, percent_width(0.25), percent_width(1), percent_height(0.5)) and input_enabled then -- hit player
@@ -149,38 +183,38 @@ function love.update(dt)
 			-- work the player
 			player_cards[#player_cards + 1] = draw_card()
 			player_total = 0
-			local cards_string = "Hand: "
 			for i = 1, #player_cards do
-				cards_string = cards_string .. " " .. player_cards[i].face 
 				player_total = player_total + player_cards[i].value
+				card_p[i] = player_cards[i].img
+				card_b[i] = card_boarder
 			end
-			line1 = cards_string
+			
 
 		elseif player_total > 21 and dealer_total > 21 then 		-- both went over 21
 			line1="Both over 21"
-			change_game_state(1)
+			change_game_state(3)
 
 		elseif player_total > 21 and dealer_total < 22 then 		-- player over
 			line1 = "Over 21"
-			change_game_state(1)
+			change_game_state(3)
 
 		elseif in_box(input[1], input[2], 0, percent_width(0.8), percent_width(1), percent_height(1)) and input_enabled then	-- hit done 
 			input_enabled = false
 			if player_total > dealer_total and dealer_total < 22 then
 				bank = bank + (bet * 2)
 				line1 = "Player wins"
-				change_game_state(1)
+				change_game_state(3)
 			elseif player_total < 22 and dealer_total > 21 then
 				bank = bank + (bet * 2)
 				line1 = "Player wins"
-				change_game_state(1)
+				change_game_state(3)
 			elseif player_total == dealer_total and player_total < 21 then
 				bank = bank + bet
 				line1 = "Same amount"
-				change_game_state(1)
+				change_game_state(3)
 			else 
 				line1 ="Dealer wins"
-				change_game_state(1)
+				change_game_state(3)
 			end
 
 		elseif input_enabled == false then 							-- reset input checker
@@ -191,6 +225,11 @@ function love.update(dt)
 		
 	elseif game_state == 3 then
 		-- round clean up state		
+		text_hand = "Clear Table"
+		if input_enabled then 
+			input_enabled = falsecard_empty
+			change_game_state(1)
+		end
 	end
 end
 
@@ -206,10 +245,22 @@ end
 function change_game_state(new_state)
 	if new_state == 1 then
 		bet = 0
+		chips = {chip_1,chip_5,chip_10,chip_50}
+		for i = 1, 5 do
+			card_p[i] = card_empty
+			card_d[i] = card_empty
+		end
+		for i = 1,10 do
+			card_b[i] = card_empty
+		end
 	elseif new_state == 2 then
 		player_total = 0
+		chips = {card_empty,card_empty,card_empty,card_empty}
+	elseif new_state == 3 then
+		for i = 1, #dealer_cards do
+			card_d[i] = dealer_cards[i].img
+		end
 	end
-
 	game_state = new_state
 end
 
