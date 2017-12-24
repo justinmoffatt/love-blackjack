@@ -25,6 +25,10 @@ function love.load()
 	player_total=0
 	dealer_total=0
 
+	used_cards = {}
+	for i = 1, 52 do
+		used_cards[i] = false
+	end
 	-- creates a deck of 52 cards
 	deck = {}
 	local i = 1
@@ -37,9 +41,13 @@ function love.load()
 	end
 
 	font = love.graphics.newFont(percent_height(1/16)) 
+	f_width_play = font:getWidth("Play Hand")
+	f_width_clear = font:getWidth("Clear Table")
+	font_small = love.graphics.newFont()
 
 	-- print outs
 	line1=percent_height(.01)
+	text_x = 0
 	text_hand = ''
 
 	-- images for the coin/chips that are used for user input
@@ -53,60 +61,54 @@ function love.load()
 	card_empty = love.graphics.newImage('img/cards/card_empty.png')
 	card_back = love.graphics.newImage('img/cards/card_back.jpg')
 	card_boarder = love.graphics.newImage('img/cards/card_boarder.png')
-	card_p = {card_empty,card_empty,card_empty,card_empty,card_empty}
-	card_d = {card_empty,card_empty,card_empty,card_empty,card_empty}
-	card_b = {card_empty,card_empty,card_empty,card_empty,card_empty}
+	card_p = {card_empty,card_empty,card_empty,card_empty,card_empty,card_empty}
+	card_d = {card_empty,card_empty,card_empty,card_empty,card_empty,card_empty}
+	card_b = {}
+	for i = 1,12 do
+		card_b[i] = card_empty
+	end
 end
 
 function love.draw()
 	love.graphics.setBackgroundColor(0, 50, 0)
+	--[[love.graphics.setFont(font_small)
+	love.graphics.print('Player Score: '..player_total..' Dealer Score: '.. dealer_total,10,0) ]]
 	love.graphics.setFont(font)
-	--love.graphics.print('Player Score: '..player_total..' Dealer Score: '.. dealer_total,10,0)
 	love.graphics.print('Bank: '.. bank .. ' Bet: '.. bet, 10,percent_height(0.075))
 	love.graphics.print(line1, 10, percent_height(.01))
-	love.graphics.print(text_hand, percent_width(.28), percent_height(.9))
+	love.graphics.print(text_hand, text_x, percent_height(.9))
 	love.graphics.draw(chips[1], 0, percent_height(0.75), 0, IMAGE_SCALE)
 	love.graphics.draw(chips[2], percent_width(0.25), percent_height(0.75), 0, IMAGE_SCALE)
 	love.graphics.draw(chips[3], percent_width(0.5), percent_height(0.75), 0, IMAGE_SCALE)
 	love.graphics.draw(chips[4], percent_width(0.75), percent_height(0.75), 0, IMAGE_SCALE)
 	-- cards
-	love.graphics.draw(card_p[1], percent_width(1/6), percent_height(1/3), 0, IMAGE_SCALE)
-	love.graphics.draw(card_b[1], percent_width(1/6), percent_height(1/3), 0, IMAGE_SCALE)
-	love.graphics.draw(card_p[2], percent_width(2/6), percent_height(1/3), 0, IMAGE_SCALE)
-	love.graphics.draw(card_b[2], percent_width(2/6), percent_height(1/3), 0, IMAGE_SCALE)
-	love.graphics.draw(card_p[3], percent_width(3/6), percent_height(1/3), 0, IMAGE_SCALE)
-	love.graphics.draw(card_b[3], percent_width(3/6), percent_height(1/3), 0, IMAGE_SCALE)
-	love.graphics.draw(card_p[4], percent_width(4/6), percent_height(1/3), 0, IMAGE_SCALE)
-	love.graphics.draw(card_b[4], percent_width(4/6), percent_height(1/3), 0, IMAGE_SCALE)
-	love.graphics.draw(card_p[5], percent_width(5/6), percent_height(1/3), 0, IMAGE_SCALE)
-	love.graphics.draw(card_b[5], percent_width(5/6), percent_height(1/3), 0, IMAGE_SCALE)
+	love.graphics.draw(card_p[1], percent_width(1/12), percent_height(1/2), 0, IMAGE_SCALE)
+	love.graphics.draw(card_b[1], percent_width(1/12), percent_height(1/2), 0, IMAGE_SCALE)
+	love.graphics.draw(card_p[2], percent_width(3/12), percent_height(1/2), 0, IMAGE_SCALE)
+	love.graphics.draw(card_b[2], percent_width(3/12), percent_height(1/2), 0, IMAGE_SCALE)
+	love.graphics.draw(card_p[3], percent_width(5/12), percent_height(1/2), 0, IMAGE_SCALE)
+	love.graphics.draw(card_b[3], percent_width(5/12), percent_height(1/2), 0, IMAGE_SCALE)
+	love.graphics.draw(card_p[4], percent_width(7/12), percent_height(1/2), 0, IMAGE_SCALE)
+	love.graphics.draw(card_b[4], percent_width(7/12), percent_height(1/2), 0, IMAGE_SCALE)
+	love.graphics.draw(card_p[5], percent_width(9/12), percent_height(1/2), 0, IMAGE_SCALE)
+	love.graphics.draw(card_b[5], percent_width(9/12), percent_height(1/2), 0, IMAGE_SCALE)
+	love.graphics.draw(card_p[6], percent_width(11/12), percent_height(1/2), 0, IMAGE_SCALE)
+	love.graphics.draw(card_b[6], percent_width(11/12), percent_height(1/2), 0, IMAGE_SCALE)
 	
-	love.graphics.draw(card_d[1], percent_width(1/6), percent_height(1/6), 0, IMAGE_SCALE)
-	love.graphics.draw(card_b[6], percent_width(1/6), percent_height(1/6), 0, IMAGE_SCALE)
-	love.graphics.draw(card_d[2], percent_width(2/6), percent_height(1/6), 0, IMAGE_SCALE)
-	love.graphics.draw(card_b[7], percent_width(2/6), percent_height(1/6), 0, IMAGE_SCALE)
-	love.graphics.draw(card_d[3], percent_width(3/6), percent_height(1/6), 0, IMAGE_SCALE)
-	love.graphics.draw(card_b[8], percent_width(3/6), percent_height(1/6), 0, IMAGE_SCALE)
-	love.graphics.draw(card_d[4], percent_width(4/6), percent_height(1/6), 0, IMAGE_SCALE)
-	love.graphics.draw(card_b[9], percent_width(4/6), percent_height(1/6), 0, IMAGE_SCALE)
-	love.graphics.draw(card_d[5], percent_width(5/6), percent_height(1/6), 0, IMAGE_SCALE)
-	love.graphics.draw(card_b[10], percent_width(5/6), percent_height(1/6), 0, IMAGE_SCALE)
-	
+	love.graphics.draw(card_d[1], percent_width(1/12), percent_height(1/6), 0, IMAGE_SCALE)
+	love.graphics.draw(card_b[7], percent_width(1/12), percent_height(1/6), 0, IMAGE_SCALE)
+	love.graphics.draw(card_d[2], percent_width(3/12), percent_height(1/6), 0, IMAGE_SCALE)
+	love.graphics.draw(card_b[8], percent_width(3/12), percent_height(1/6), 0, IMAGE_SCALE)
+	love.graphics.draw(card_d[3], percent_width(5/12), percent_height(1/6), 0, IMAGE_SCALE)
+	love.graphics.draw(card_b[9], percent_width(5/12), percent_height(1/6), 0, IMAGE_SCALE)
+	love.graphics.draw(card_d[4], percent_width(7/12), percent_height(1/6), 0, IMAGE_SCALE)
+	love.graphics.draw(card_b[10], percent_width(7/12), percent_height(1/6), 0, IMAGE_SCALE)
+	love.graphics.draw(card_d[5], percent_width(9/12), percent_height(1/6), 0, IMAGE_SCALE)
+	love.graphics.draw(card_b[11], percent_width(9/12), percent_height(1/6), 0, IMAGE_SCALE)
+	love.graphics.draw(card_d[6], percent_width(12/12), percent_height(1/6), 0, IMAGE_SCALE)
+	love.graphics.draw(card_b[12], percent_width(12/12), percent_height(1/6), 0, IMAGE_SCALE)
 	-- draw the button boxes for debugging
-
-	--[[
-	love.graphics.rectangle('line', 0, percent_height(0.75), percent_width(0.25),percent_width(0.25))
-	love.graphics.rectangle('line', percent_width(0.25), percent_height(0.75), percent_width(0.25),percent_width(0.25))
-	love.graphics.rectangle('line', percent_width(0.5), percent_height(0.75), percent_width(0.25),percent_width(0.25))
-	love.graphics.rectangle('line', percent_width(0.75), percent_height(0.75), percent_width(0.25),percent_width(0.25))
-	love.graphics.rectangle('line', 0, percent_height(0.25), percent_width(1),percent_height(0.5))
-	
-	love.graphics.setColor(244, 0, 0,255)
-	love.graphics.rectangle('line', 0, percent_width(0.25), percent_width(1), percent_height(0.5))
-	love.graphics.setColor(0, 244, 0,255)
-	love.graphics.rectangle('line', 0, percent_width(0.80), percent_width(1), percent_height(1))
-	love.graphics.setColor(255, 255, 255, 255)
-	]]
+	love.graphics.rectangle("line",0, percent_height(0.85), percent_width(1), percent_height(1))
 end
 
 -- INPUTS
@@ -116,7 +118,6 @@ function love.touchpressed(id, x, y, dx, dy, pressure)
 end	
 
 function love.update(dt)
-	
 	-- game logic
 	if game_state == 0 then				-- pause state
 		change_game_state(1)
@@ -147,6 +148,8 @@ function love.update(dt)
 
 	elseif game_state == 2 then 		-- card getting state
 		text_hand = 'Play Hand'
+		text_x = percent_width(0.5) - (f_width_play/2)
+
 		-- logic for the deaing
 		if player_total == 0 then	-- this is the init state
 			player_cards = {draw_card(), draw_card()}
@@ -154,23 +157,25 @@ function love.update(dt)
 			-- work the dealer
 			dealer_cards = {draw_card(), draw_card()}
 			dealer_total = dealer_cards[1].value + dealer_cards[2].value
-			while dealer_total < 17 do
-				dealer_cards[#dealer_cards+1] = draw_card()
-				dealer_total = dealer_total + dealer_cards[#dealer_cards].value
-			end
+			-- players
 			card_p[1] = player_cards[1].img
 			card_p[2] = player_cards[2].img
 			card_b[1] = card_boarder
 			card_b[2] = card_boarder
 
 			card_d[1] = dealer_cards[1].img 
-			card_b[6] = card_boarder
+			card_d[2] = card_back
+			card_b[7] = card_boarder
+			card_b[8] = card_boarder
 
-			for i = 2, #dealer_cards do
-				card_d[i] = card_back 
-				card_b[i+5] =card_boarder
-			end
-			
+		elseif dealer_total == 21 and player_total == 21 then
+			line1 = "Both are 21"
+			change_game_state(3)
+
+		elseif dealer_total == 21 then
+			line1 = 'Dealer win'
+			change_game_state(3)
+
 		elseif player_total == 21 then 								-- Player wins with natural 21
 			bank = bank + (bet * 2)
 			line1 = "Player wins"
@@ -188,18 +193,44 @@ function love.update(dt)
 				card_p[i] = player_cards[i].img
 				card_b[i] = card_boarder
 			end
-			
+			-- fix any ace cases
+			if player_total > 21 then
+				for i = 1, #player_cards do
+					if player_cards[i].value == 11 then
+						player_cards[i].value = '1'
+						player_total = player_total - 10
+						if player_total < 21 then
+							break
+						end
+					end
+				end
+			 end 
 
-		elseif player_total > 21 and dealer_total > 21 then 		-- both went over 21
-			line1="Both over 21"
+		elseif player_total > 21 then 		-- player went over 21
+			line1="Over 21"
 			change_game_state(3)
 
-		elseif player_total > 21 and dealer_total < 22 then 		-- player over
-			line1 = "Over 21"
-			change_game_state(3)
-
-		elseif in_box(input[1], input[2], 0, percent_width(0.8), percent_width(1), percent_height(1)) and input_enabled then	-- hit done 
+		elseif in_box(input[1], input[2], 0, percent_width(0.86), percent_width(1), percent_height(1)) and input_enabled then	-- hit done 
 			input_enabled = false
+
+			-- work the dealer
+			while dealer_total < 18 do
+				dealer_cards[#dealer_cards+1] = draw_card()
+				dealer_total = dealer_total + dealer_cards[#dealer_cards].value
+				-- check for aces
+				if dealer_total > 21 then
+					for i = 1, #dealer_cards do
+						if dealer_cards[i].value == 11 then
+							dealer_cards[i].value = 1
+							dealer_total = dealer_total - 10
+							if dealer_total < 21 then
+								break
+							end
+						end
+					end
+				end
+			end
+
 			if player_total > dealer_total and dealer_total < 22 then
 				bank = bank + (bet * 2)
 				line1 = "Player wins"
@@ -208,7 +239,7 @@ function love.update(dt)
 				bank = bank + (bet * 2)
 				line1 = "Player wins"
 				change_game_state(3)
-			elseif player_total == dealer_total and player_total < 21 then
+			elseif player_total == dealer_total and player_total < 22 then
 				bank = bank + bet
 				line1 = "Same amount"
 				change_game_state(3)
@@ -216,27 +247,16 @@ function love.update(dt)
 				line1 ="Dealer wins"
 				change_game_state(3)
 			end
-
-		elseif input_enabled == false then 							-- reset input checker
-			if input == nil then
-				input_enabled = true
-			end
 		end
 		
 	elseif game_state == 3 then
 		-- round clean up state		
 		text_hand = "Clear Table"
+		text_x = percent_width(0.5) - (f_width_clear/2)
 		if input_enabled then 
-			input_enabled = falsecard_empty
+			input_enabled = false
 			change_game_state(1)
 		end
-	end
-end
-
-function hang(i)
-	i= i *1000*100
-	for i = 0, i, 1 do
-		i = i + 1
 	end
 end
 
@@ -246,19 +266,24 @@ function change_game_state(new_state)
 	if new_state == 1 then
 		bet = 0
 		chips = {chip_1,chip_5,chip_10,chip_50}
-		for i = 1, 5 do
+		for i = 1, 6 do
 			card_p[i] = card_empty
 			card_d[i] = card_empty
 		end
-		for i = 1,10 do
+		for i = 1,12 do
 			card_b[i] = card_empty
+		end
+		for i = 1, 52 do
+			used_cards[i] = false
 		end
 	elseif new_state == 2 then
 		player_total = 0
 		chips = {card_empty,card_empty,card_empty,card_empty}
+
 	elseif new_state == 3 then
 		for i = 1, #dealer_cards do
 			card_d[i] = dealer_cards[i].img
+			card_b[i+6] = card_boarder
 		end
 	end
 	game_state = new_state
@@ -289,24 +314,26 @@ end
 function draw_card()
 	local index = love.math.random(1,52)
 	local cycle = 0
-	while deck[index] ~= nil and cycle < 52 do
+	while used_cards[index] == true and cycle < 52 do
 		index = love.math.random(1,52)
 		cycle = cycle + 1
 	end
-
-	if cycle == 25 then
-		love.window.showMessageBox( 'ERROR', 'OUT OF CARDS', 'info', false )
-	end
-
-	local card = deck[index]
-	--deck[index] = nil
+	used_cards[index] = true
 	
+	local card = table.copy(deck[index])	
 	return card
+end
+
+-- table copy method
+function table.copy(t)
+  local ret = {}
+  for k, v in pairs(t) do ret[k] = v end
+  return setmetatable(ret, getmetatable(t))
 end
 
 -- debug keys
 function love.keypressed(key)
-	if key == 'escape' then
+	--[[if key == 'escape' then
 		love.window.close()
-	end
+	end]]
 end
