@@ -108,7 +108,6 @@ function love.draw()
 	love.graphics.draw(card_d[6], percent_width(12/12), percent_height(1/6), 0, IMAGE_SCALE)
 	love.graphics.draw(card_b[12], percent_width(12/12), percent_height(1/6), 0, IMAGE_SCALE)
 	-- draw the button boxes for debugging
-	--love.graphics.rectangle("line",0, percent_height(0.85), percent_width(1), percent_height(1))
 end
 
 -- INPUTS
@@ -210,7 +209,7 @@ function love.update(dt)
 			line1="Over 21"
 			change_game_state(3)
 
-		elseif in_box(input[1], input[2], 0, percent_height(0.85), percent_width(1), percent_height(1)) and input_enabled then	-- hit done 
+		elseif in_box(input[1], input[2], 0, percent_height(0.8), percent_width(1), percent_height(1)) and input_enabled then	-- hit done 
 			input_enabled = false
 
 			-- work the dealer
