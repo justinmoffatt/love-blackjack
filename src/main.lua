@@ -210,7 +210,7 @@ function love.update(dt)
 			line1="Over 21"
 			change_game_state(3)
 
-		elseif in_box(input[1], input[2], 0, percent_width(0.86), percent_width(1), percent_height(1)) and input_enabled then	-- hit done 
+		elseif in_box(input[1], input[2], 0, percent_height(0.85), percent_width(1), percent_height(1)) and input_enabled then	-- hit done 
 			input_enabled = false
 
 			-- work the dealer
